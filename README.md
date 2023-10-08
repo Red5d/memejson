@@ -2,6 +2,8 @@
 
 A schema and implementation examples for a method of generating meme images from a JSON structure.
 
+Try out the HTML/JS implementation here: https://red5d.github.io/memejson/
+
 Files:
 * meme-schema.json - JSON Schema for defining image elements
 * example.json - Example JSON structure that implements the schema
