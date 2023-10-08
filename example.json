@@ -1,0 +1,30 @@
+{
+    "background_uri": "https://i.imgflip.com/q2w0.jpg",
+    "top_text": "Hello",
+    "bottom_text": "World!",
+    "free_text": [
+      {
+        "text": "Lorem ipsum",
+        "position": {
+          "x": 10,
+          "y": 20
+        }
+      },
+      {
+        "text": "dolor sit amet",
+        "position": {
+          "x": 30,
+          "y": 40
+        }
+      }
+    ],
+    "formatting": {
+      "font": "Arial",
+      "font_color": "#000000",
+      "top_padding": 5,
+      "bottom_padding": 5,
+      "left_padding": 10,
+      "right_padding": 10
+    }
+  }
+  

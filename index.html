@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Meme JSON</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+
+  <style>
+    #canvas-container {
+      display: inline-block;
+    }
+
+    #canvas {
+      display: block;
+      max-width: 100%;
+    }
+
+    .form-group { margin:10px}
+  </style>
+  <script>
+    class FreeTextInput extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        // Create the free text input
+        const freeTextGroup = document.createElement('div');
+        freeTextGroup.classList.add('form-group');
+
+        const freeTextLabel = document.createElement('label');
+        freeTextLabel.setAttribute('for', 'free-text');
+        freeTextLabel.textContent = 'Free Text';
+
+        const freeTextInput = document.createElement('input');
+        freeTextInput.type = 'text';
+        freeTextInput.classList.add('form-control');
+        freeTextInput.id = 'free-text';
+        freeTextInput.placeholder = 'This is the free text';
+
+        freeTextGroup.appendChild(freeTextLabel);
+        freeTextGroup.appendChild(freeTextInput);
+
+        // Create the X and Y input fields
+        const inputGroup = document.createElement('div');
+        inputGroup.classList.add('row');
+
+        const col1 = document.createElement('div');
+        col1.classList.add('col');
+
+        const xInputGroup = document.createElement('div');
+        xInputGroup.classList.add('input-group');
+        xInputGroup.style.marginLeft = '10px';
+        xInputGroup.style.width = '350px';
+
+        const xLabel = document.createElement('span');
+        xLabel.classList.add('input-group-text');
+        xLabel.textContent = 'X';
+
+        const xInput = document.createElement('input');
+        xInput.type = 'number';
+        xInput.classList.add('form-control');
+        xInput.id = 'free-text-x';
+        xInput.placeholder = '0';
+
+        const yLabel = document.createElement('span');
+        yLabel.classList.add('input-group-text');
+        yLabel.textContent = 'Y';
+
+        const yInput = document.createElement('input');
+        yInput.type = 'number';
+        yInput.classList.add('form-control');
+        yInput.id = 'free-text-y';
+        yInput.placeholder = '0';
+
+        xInputGroup.appendChild(xLabel);
+        xInputGroup.appendChild(xInput);
+        xInputGroup.appendChild(yLabel);
+        xInputGroup.appendChild(yInput);
+
+        col1.appendChild(xInputGroup);
+
+        const col2 = document.createElement('div');
+        col2.classList.add('col');
+
+        // Create the Remove button
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.classList.add('btn', 'btn-danger');
+        removeButton.textContent = 'Remove';
+        removeButton.style.marginLeft = '10px';
+        removeButton.addEventListener('click', removeFreeTextInput);
+
+        col2.appendChild(removeButton);
+
+        inputGroup.appendChild(col1);
+        inputGroup.appendChild(col2);
+
+        // Add the elements to the custom element
+        this.appendChild(freeTextGroup);
+        this.appendChild(inputGroup);
+        this.appendChild(document.createElement('br'));
+      }
+    }
+
+    // Define the custom element
+    customElements.define('freetext-input', FreeTextInput);
+
+  </script>
+</head>
+<body>
+  <div id="controls" style="width:fit-content; margin: 10px">
+    <div class="form-group">
+      <label for="file-upload">Upload a Meme JSON file:</label>
+      <input type="file" class="form-control" id="file-upload" accept=".json">
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="background-url">Background URL</label>
+          <input type="text" class="form-control" id="background-url" placeholder="https://example.com/image.jpg">
+        </div>
+
+        <div class="form-group">
+          <label for="font-color">Font Color</label>
+          <input type="color" class="form-control" id="font-color" value="#000000">
+        </div>
+
+        <div class="form-group">
+          <label for="top-text">Top Text</label>
+          <input type="text" class="form-control" id="top-text" placeholder="This is the top text">
+        </div>
+
+        <div class="form-group">
+          <label for="bottom-text">Bottom Text</label>
+          <input type="text" class="form-control" id="bottom-text" placeholder="This is the bottom text">
+        </div>
+      </div>
+    
+
+      <div class="col">
+        <div class="form-group">
+          <label for="font">Font</label>
+          <select class="form-control" id="font">
+            <option value="Arial">Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Trebuchet MS">Trebuchet MS</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="font-size">Font Size</label>
+          <input type="number" class="form-control" id="font-size" value="40">
+        </div>
+        
+        <div class="form-group">
+          <label for="top-padding">Top Padding</label>
+          <input type="number" class="form-control" id="top-padding" value="40">
+        </div>
+        
+        <div class="form-group">
+          <label for="bottom-padding">Bottom Padding</label>
+          <input type="number" class="form-control" id="bottom-padding" value="40">
+        </div>
+      </div>
+    </div>
+
+    <!-- Free text entry -->
+    <div id="free-text-group">
+      <!-- <div class="form-group">
+        <label for="free-text">Free Text</label>
+        <input type="text" class="form-control" id="free-text" placeholder="This is the free text">
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="input-group" style="margin-left:10px; width:350px">
+            <span class="input-group-text">X</span>
+            <input type="number" class="form-control" id="free-text-x" placeholder="0">
+            <span class="input-group-text">Y</span>
+            <input type="number" class="form-control" id="free-text-y" placeholder="0">
+          </div>
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-danger" style="margin-left:10px">Remove</button>
+        </div>
+      </div> -->
+      <freetext-input></freetext-input>
+
+      <!-- Add Free-placement text -->
+      <div style="margin-left:10px">
+        <button id="add-free-text" class="btn btn-primary" onclick="addNewFreeTextInput()">Add Free Text</button>
+        <button id="update-free-text" class="btn btn-primary" onclick="updateFreeTextArray()">Update Image</button>
+      </div>
+    </div>
+
+  </div><br>
+
+  <div id="canvas-container" style="margin-left:20px">
+    <canvas id="canvas" style="border: solid 1px black"></canvas>
+    <br>
+    <button id="download-btn" class="btn btn-primary">Download Image</button>
+    <button id="download-json" class="btn btn-primary" onclick="downloadJSON()">Download JSON</button>
+  </div>
+  
+
+  <script>
+    console.log("Creating json object");
+    // Starting JSON object
+    var json = {
+      "background_uri": "https://i.imgflip.com/q2w0.jpg",
+      "top_text": "Hello",
+      "bottom_text": "World!",
+      "free_text": [
+        // {
+        //   "text": "Lorem ipsum",
+        //   "position": {
+        //     "x": 300,
+        //     "y": 200
+        //   }
+        // },
+        // {
+        //   "text": "dolor sit amet",
+        //   "position": {
+        //     "x": 300,
+        //     "y": 300
+        //   }
+        // }
+      ],
+      "formatting": {
+        "font": "Arial",
+        "font_color": "#000000",
+        "font_size": 40,
+        "top_padding": 40,
+        "bottom_padding": 40,
+        "left_padding": 10,
+        "right_padding": 10
+      }
+    };
+
+    console.log(json);
+
+
+    // Load meme config from json file
+    function loadJSONFromFile(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function() {
+        try {
+          json = JSON.parse(reader.result);
+          console.log("JSON loaded successfully");
+          generateImage(json);
+        } catch (error) {
+          console.error("Error parsing JSON file", error);
+        }
+      };
+
+      reader.readAsText(file);
+    }
+
+    document.getElementById("file-upload").addEventListener("change", loadJSONFromFile);
+
+    // add free text elements to the json object
+    function addNewFreeTextInput() {
+      const freeTextGroup = document.getElementById("free-text-group");
+      addfreetext = document.getElementById("add-free-text");
+
+      // create the text input
+      // freeTextGroup.appendChild(document.createElement("freetext-input"));
+      addfreetext.parentNode.parentNode.insertBefore(document.createElement("freetext-input"), addfreetext.parentNode);
+    }
+
+    function removeFreeTextInput(event) {
+      // Get the parent freetext-input element
+      const freetextInput = event.target.closest('freetext-input');
+
+      // Remove the parent freetext-input element if it exists
+      if (freetextInput) {
+        freetextInput.remove();
+      }
+    }
+
+    function updateFreeTextArray() {
+      const freeTextInputs = document.querySelectorAll("#free-text-group input[type='text'], #free-text-group input[type='number']");
+      const freeTextArray = [];
+
+      freeTextInputs.forEach(input => {
+        const inputId = input.id;
+        const inputValue = input.value;
+
+        if (inputId === "free-text") {
+          freeTextArray.push({ text: inputValue });
+        } else if (inputId === "free-text-x") {
+          const lastIndex = freeTextArray.length - 1;
+          freeTextArray[lastIndex].position = { x: parseInt(inputValue) };
+        } else if (inputId === "free-text-y") {
+          const lastIndex = freeTextArray.length - 1;
+          freeTextArray[lastIndex].position.y = parseInt(inputValue);
+        }
+      });
+
+      json['free_text'] = freeTextArray;
+      generateImage(json);
+    }
+
+    // download the JSON object as a file
+    function downloadJSON(){
+      file = new File([JSON.stringify(json)], 'meme.json', {
+        type: 'text/json',
+      })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(file)
+
+      link.href = url
+      link.download = file.name
+      document.body.appendChild(link)
+      link.click()
+
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    }
+
+    // generate and display the image with text overlays
+    function generateImage(json) {
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+
+      // Create an image element for the background image
+      var backgroundImage = new Image();
+      backgroundImage.crossOrigin = 'anonymous';
+
+      // Load the background image
+      backgroundImage.onload = function() {
+        // Set the canvas size to match the background image
+        canvas.width = backgroundImage.width;
+        canvas.height = backgroundImage.height;
+
+        // Draw the background image on the canvas
+        ctx.drawImage(backgroundImage, 0, 0);
+
+        // Set the font and text alignment for the text overlays
+        ctx.font = 'bold ' + json.formatting.font_size + 'px ' + json.formatting.font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Set the color for the text overlays
+        ctx.fillStyle = json.formatting.font_color;
+
+        // Draw the top text overlay
+        var topText = json.top_text;
+        ctx.fillText(topText.toUpperCase(), canvas.width / 2, json.formatting.top_padding);
+
+        // Draw the bottom text overlay
+        var bottomText = json.bottom_text;
+        ctx.fillText(bottomText.toUpperCase(), canvas.width / 2, canvas.height - json.formatting.bottom_padding);
+
+        // Draw the free text overlays
+        for (var i = 0; i < json.free_text.length; i++) {
+          var text = json.free_text[i].text;
+          var position = json.free_text[i].position;
+
+          ctx.fillText(text, position.x, position.y);
+        }
+      };
+
+      // Set the source of the background image (from url or base64)
+      backgroundImage.src = json.background_uri;
+
+      // Add a click event listener to the download button
+      var downloadBtn = document.getElementById('download-btn');
+      downloadBtn.addEventListener('click', function() {
+        // Create a temporary anchor element
+        var link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'image.png';
+
+        // Simulate a click on the anchor element to trigger the download
+        // link.click();
+      });
+    }
+
+    // Call the generateImage function with the example JSON object
+    generateImage(json);
+
+    
+    var topText = document.getElementById('top-text');
+    topText.addEventListener('keyup', function() {
+      json.top_text = topText.value;
+      generateImage(json);
+    });
+    
+    var bottomText = document.getElementById('bottom-text');
+    bottomText.addEventListener('keyup', function() {
+      json.bottom_text = bottomText.value;
+      generateImage(json);
+    });
+    
+    var font = document.getElementById('font');
+    font.addEventListener('change', function() {
+      json.formatting.font = font.value;
+      generateImage(json);
+    });
+
+    var fontColor = document.getElementById('font-color');
+    fontColor.addEventListener('change', function() {
+      json.formatting.font_color = fontColor.value;
+      generateImage(json);
+    });
+
+    var fontSize = document.getElementById('font-size');
+    fontSize.addEventListener('change', function() {
+      json.formatting.font_size = fontSize.value;
+      generateImage(json);
+    });
+
+    var topPadding = document.getElementById('top-padding');
+    topPadding.addEventListener('change', function() {
+      json.formatting.top_padding = topPadding.value;
+      generateImage(json);
+    });
+
+    var bottomPadding = document.getElementById('bottom-padding');
+    bottomPadding.addEventListener('change', function() {
+      json.formatting.bottom_padding = bottomPadding.value;
+      generateImage(json);
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "background_uri": {
+        "type": "string",
+        "format": "uri"
+      },
+      "top_text": {
+        "type": "string"
+      },
+      "bottom_text": {
+        "type": "string"
+      },
+      "free_text": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "position": {
+              "type": "object",
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "formatting": {
+        "type": "object",
+        "properties": {
+          "font": {
+            "type": "string"
+          },
+          "font_color": {
+            "type": "string"
+          },
+          "font_size": {
+            "type": "integer"
+          },
+          "top_padding": {
+            "type": "integer"
+          },
+          "bottom_padding": {
+            "type": "integer"
+          },
+          "left_padding": {
+            "type": "integer"
+          },
+          "right_padding": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "required": ["background_uri", "top_text", "bottom_text"]
+  }
+  
